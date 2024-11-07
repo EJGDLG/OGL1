@@ -24,7 +24,7 @@ renderer.SetShaders(vShader=vertex_shader, fShader=fragmet_shader)
 
 
 skyboxTextures = ['Textures\Skybox_Textures\\right.jpg',
-                  'Textures\Skybox_Textures\\left.jpg',
+                  'Textures\Skybox_Textures\left.jpg',
                   'Textures\Skybox_Textures\\top.jpg',
                   'Textures\Skybox_Textures\\bottom.jpg',
                   'Textures\Skybox_Textures\\front.jpg',
@@ -34,13 +34,12 @@ renderer.CreateSkybox(textureLIst=skyboxTextures,
                       vShader=skybox_vertex_shader,
                       fShader=skybox_fragment_shader)
 
-faceModel = Model('Textures/Gun.obj')
-faceModel.AddTextures('Textures/Gun.bmp')
+faceModel = Model('Gun.obj')
+faceModel.AddTextures('Textures\Gun.bmp')
 renderer.scene.append(faceModel)
 faceModel.rotation.y = 0
 faceModel.translation.z = -3
 isRunning = True
-
 
 vShader = vertex_shader
 fShader = fragmet_shader
