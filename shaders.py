@@ -1,11 +1,3 @@
-
-# voy a crear mis programas aqui pero voy a usar texto despues uso una funcion
-# para compilarlos y usarlo
-# en layout le digo que empiezo a leer el atributo en la posicion 0 y que es un vector llamado posicion
-# vector numero el numero es la cantidad cuanto sale [0,0,0]
-# los shaders son dificiles de debuggear porque es imposible poner un breackpoint
-# glPosition es donde se guarda la posicion de los vertices
-
 skybox_vertex_shader = '''
 #version 450 core
 
@@ -106,8 +98,7 @@ void main()
   outNormals = normals;
 }
 """
-# uniform datos que son todos iguales 
-# no hay que enviarle el atributo del vertice . En este caso tiene antes que pasar por el vertice
+
 fragmet_shader = """
 #version 450 core
 in vec2 outTextCoords;
