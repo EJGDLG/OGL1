@@ -1,99 +1,145 @@
 import pygame
 from pygame.locals import *
 from gl import Renderer
-from buffer import Buffer
-from model import Model
+from Buffer import Buffer
 from shaders import *
+from model import Model
+#Vamos a hacer un poco de regresion porque lo que vamos a hacer es un rasterizador
+#OPEN GL ya usa la tarjeta de video jajaj no tengo ni modo toco pedir una
 
 width = 960
-height = 900
+height = 540
 
 pygame.init()
 
-screen = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
+# el segundo argumento en vez de dibujar directamente los puntos
+# de la pantalla vamos a dibujar con OPENGL
+
+# Double buffering 
+screen = pygame.display.set_mode((width,height), pygame.OPENGL | pygame.DOUBLEBUF)
+
 clock = pygame.time.Clock()
 
-rend = Renderer(screen=screen)
+renderer = Renderer(screen=screen)
 
-#rend.SetShaders(vShader=vertex_shader, fShader=fragmet_shader)
+renderer.SetShaders(vShader=vertex_shader, fShader=fragmet_shader)
 
-faceModel = Model("Gun.obj")
+#y si hacemos un triangulo xyz
+# todo paso de corrido punto 1 x,y,z punto 2 x,y,z
 
-rend.scene.append(faceModel)
+# le vamos a agregar nuevas propiedad que va a ser el color
 
+#             posision               color
+# triangle = [-0.5,-0.5,0,            1,0,0,
+#             0   ,0.5,0,             0,1,0,
+#             0.5,-0.5,0,             0,0,1]
+
+# #guardaoms la informacion en el buffer
+# #hecho a partir de la informacion del triangulo
+# renderer.scene.append(Buffer(data=triangle))
+
+
+# Cube map conjunto de texturas para representar un cielo
+
+skyboxTextures = ['RayTraceOpenGl\Textures\Skybox_Textures\\right.jpg',
+                  'RayTraceOpenGl\Textures\Skybox_Textures\left.jpg',
+                  'RayTraceOpenGl\Textures\Skybox_Textures\\top.jpg',
+                  'RayTraceOpenGl\Textures\Skybox_Textures\\bottom.jpg',
+                  'RayTraceOpenGl\Textures\Skybox_Textures\\front.jpg',
+                  'RayTraceOpenGl\Textures\Skybox_Textures\\back.jpg']
+
+renderer.CreateSkybox(textureLIst=skyboxTextures,
+                      vShader=skybox_vertex_shader,
+                      fShader=skybox_fragment_shader)
+
+faceModel = Model('RayTraceOpenGl\model (1).obj')
+faceModel.AddTextures('RayTraceOpenGl\Textures\model.bmp')
+renderer.scene.append(faceModel)
 faceModel.rotation.y = 0
 faceModel.translation.z = -3
 isRunning = True
 
-# Set default shaders
-vShader = vertex_shader  # Default vertex shader
-fShader = fragmet_shader  # Default fragment shader
-#rend.SetShaders(vShader, fShader)
+
+vShader = vertex_shader
+fShader = fragmet_shader
+renderer.SetShaders(vShader, fShader)
+
+#Para manipular la camara
+camDistance = 5
+camAngle = 0
+
+
 while isRunning:
-    deltaTime = clock.tick(60) / 1000
-    keys = pygame.key.get_pressed()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            isRunning = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                isRunning = False
-            elif event.key == pygame.K_F1:
-                rend.FillMode()
-            elif event.key == pygame.K_F2:
-                rend.WireFrameMode()
-            elif event.key == pygame.K_1:  # Vertex Shader Básico
-                vShader = vertex_shader
-                fShader = fragmet_shader
-                rend.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_2:  # Wobble Shader
-                vShader = Wobble_Shader
-                rend.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_3:  # Twist Shader
-                vShader = Twist_Shader
-                rend.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_4:  # Ripple Shader
-                vShader = Ripple_Shader
-                rend.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_5:  # Glow Shader
-                fShader = Glow_Shader
-                rend.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_6:  # Sepia Shader (si lo tienes disponible)
-                fShader = Sepia_Shader
-                rend.SetShaders(vShader, fShader)
+  #esto va a tener mas uso en un frame rate mas aceptable
+  deltaTime = clock.tick(60) / 1000
+  keys = pygame.key.get_pressed()
+  for event in pygame.event.get():
+    if event.type == pygame.QUIT:
+      isRunning = False
+    elif event.type == pygame.KEYDOWN:
+      if event.key  == pygame.K_ESCAPE:
+        isRunning = False
+      elif event.key == pygame.K_F1:
+        renderer.FillMode()
+      elif event.key == pygame.K_F2:
+        renderer.WireFrameMode()
+      elif event.key == pygame.K_3:
+        vShader = vertex_shader
+        renderer.SetShaders(vShader, fShader)
+      elif event.key == pygame.K_4:
+        vShader = distortion_shader
+        renderer.SetShaders(vShader, fShader)
+      elif event.key == pygame.K_5:
+        vShader = water_shader
+        renderer.SetShaders(vShader, fShader)
+      elif event.key == pygame.K_6:
+        fShader = fragmet_shader
+        renderer.SetShaders(vShader, fShader)
+      elif event.key == pygame.K_7:
+        fShader = negative_shader
+        renderer.SetShaders(vShader, fShader)
+  
 
-    # Movimiento del modelo
-    if keys[K_LEFT]:
-        faceModel.rotation.y -= 10 * deltaTime
-    if keys[K_RIGHT]:
-        faceModel.rotation.y += 10 * deltaTime
+  #move model
+  if keys[K_LEFT]:
+    faceModel.rotation.y -=10*deltaTime
+  if keys[K_RIGHT]:
+    faceModel.rotation.y +=10*deltaTime
+  
+  
 
-    if keys[K_a]:
-        rend.camera.position.x -= 1 * deltaTime
+  if keys[K_a]:
+    camAngle -= 45 * deltaTime
+  if keys[K_d]:
+    camAngle += 45 * deltaTime
+  if keys[K_w]:
+    camDistance -= 2 * deltaTime
+  if keys[K_s]:
+    camDistance += 2 * deltaTime
 
-    if keys[K_d]:
-        rend.camera.position.x += 1 * deltaTime
+  mouseButtons = pygame.mouse.get_pressed()
+  if mouseButtons[0]:
+    camAngle += pygame.mouse.get_rel()[0] * deltaTime*5
 
-    if keys[K_w]:
-        rend.camera.position.y += 1 * deltaTime
+  #Move LIghte
+  
+  if keys[K_j]:
+    renderer.pointLight.x -= 1 *deltaTime
+  
+  if keys[K_l]:
+    renderer.pointLight.x += 1 *deltaTime
+  
+  if keys[K_i]:
+    renderer.pointLight.z -= 1 *deltaTime
+  
+  if keys[K_k]:
+    renderer.pointLight.z += 1 *deltaTime
 
-    if keys[K_s]:
-        rend.camera.position.y -= 1 * deltaTime
+  renderer.time += deltaTime
 
-    # Movimiento de la luz
-    if keys[K_j]:
-        rend.pointLight.x -= 1 * deltaTime
-
-    if keys[K_l]:
-        rend.pointLight.x += 1 * deltaTime
-
-    if keys[K_i]:
-        rend.pointLight.z -= 1 * deltaTime
-
-    if keys[K_k]:
-        rend.pointLight.z += 1 * deltaTime
-
-    rend.Render()
-    pygame.display.flip()
+  renderer.camera.LookAt(faceModel.translation)
+  renderer.camera.Orbit(center=faceModel.translation, distance=camDistance, angle=camAngle)
+  renderer.Render()
+  pygame.display.flip()
 
 pygame.quit()
