@@ -1,5 +1,5 @@
 from obj import Obj
-from buffer import Buffer
+from Buffer import Buffer
 from pygame import image
 from OpenGL.GL import *
 import glm
@@ -54,14 +54,13 @@ class Model(object):
   
 
   def AddTextures(self, textureFilename):
-    # TIENE SOPORTE PARA CUALQUIER FORMATO
+
     self.textureSurface = image.load(textureFilename)
     self.textureData = image.tostring(self.textureSurface, "RGB", True)
     self.texture = glGenTextures(1)
 
   def GetModelMatrix(self):
-    # M = T*R*S
-    # M = PITCH *RAW * ROLL
+
     identity = glm.mat4(1)
     translateMat = glm.translate(identity, self.translation)
     
@@ -79,21 +78,19 @@ class Model(object):
 
   def Render(self):
 
-    #dar la textura a la tarjeta de video
     if self.texture is not None:
       glActiveTexture(GL_TEXTURE0)
       glBindTexture(GL_TEXTURE_2D, self.texture)
       
       glTexImage2D(
-                  GL_TEXTURE_2D, #Texture type
-                  0, #Positions
-                  GL_RGB, #format
-                  self.textureSurface.get_width(), #Width
-                  self.textureSurface.get_height(), #Height
-                  0, # Border
-                  GL_RGB, # format
-                  GL_UNSIGNED_BYTE, # Type bytes positivos
-                  self.textureData #data
+                  GL_TEXTURE_2D, 
+                  0, 
+                  GL_RGB, 
+                  self.textureSurface.get_width(),
+                  self.textureSurface.get_height(), 
+                  GL_RGB, 
+                  GL_UNSIGNED_BYTE, 
+                  self.textureData 
               )
       glGenerateMipmap(GL_TEXTURE_2D)
 
