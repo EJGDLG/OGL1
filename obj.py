@@ -43,13 +43,16 @@ class Obj(object):
                 lines = file.read().splitlines()
 
             for line in lines:
+                # Elimina espacios al final de la línea
                 line = line.rstrip()
 
                 try:
                     prefix, value = line.split(" ", 1)
                 except ValueError:
-                    continue  
+                    continue  # Ignora líneas que no tienen el formato esperado
 
+                # Dependiendo del prefijo, parseamos y guardamos
+                # la información en el contenedor correcto
                 if prefix == "v":  # Vértices
                     try:
                         vert = list(map(float, value.split(" ")))
