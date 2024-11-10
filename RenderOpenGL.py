@@ -50,7 +50,6 @@ camAngle = 0
 camHeight = 0  # Nueva variable para altura de la cámara
 
 while isRunning:
-    # Esto va a tener más uso en un frame rate más aceptable
     deltaTime = clock.tick(60) / 100
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
@@ -63,22 +62,37 @@ while isRunning:
                 renderer.FillMode()
             elif event.key == pygame.K_F2:
                 renderer.WireFrameMode()
-            elif event.key == pygame.K_3:
+            elif event.key == pygame.K_F3:
                 vShader = vertex_shader
                 renderer.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_4:
+            elif event.key == pygame.K_F4:
                 vShader = distortion_shader
                 renderer.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_5:
+            elif event.key == pygame.K_F5:
                 vShader = water_shader
                 renderer.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_6:
+            elif event.key == pygame.K_F6:
                 fShader = fragmet_shader
                 renderer.SetShaders(vShader, fShader)
-            elif event.key == pygame.K_7:
+            elif event.key == pygame.K_F7:
                 fShader = negative_shader
                 renderer.SetShaders(vShader, fShader)
-
+            elif event.key == pygame.K_F8:
+                vShader = Wobble_Shader
+                renderer.SetShaders(vShader, fShader)
+            elif event.key == pygame.K_F9:
+                vShader = Twist_Shader
+                renderer.SetShaders(vShader, fShader)
+            elif event.key == pygame.K_F10:
+                vShader = Ripple_Shader
+                renderer.SetShaders(vShader, fShader)
+            elif event.key == pygame.K_F11:
+                fShader = Glow_Shader
+                renderer.SetShaders(vShader, fShader)
+            elif event.key == pygame.K_F12:
+                fShader = Sepia_Shader
+                renderer.SetShaders(vShader, fShader)
+                
     # Movimiento de la cámara con límites para camHeight y camDistance
     if keys[K_LEFT]:
         faceModel.rotation.y -= 10 * deltaTime
